@@ -1,10 +1,10 @@
-import { connectToDatabase } from '../conexion/conection.js';
+import { connectToDatabase } from '../conection/conection.js';
 import { constans } from '../utils/constantes.js';
 
 
-async function checkUserExists(email, userIdentification) {
+async function checkUserExists(email, userIdentification, user_id) {
     const db = await connectToDatabase();
-    const [rows] = await db.query(constans.query_validate, [email, userIdentification]);
+    const [rows] = await db.query(constans.query_validate, [email, userIdentification, user_id]);
     return rows;
 }
 
@@ -17,13 +17,35 @@ async function registerUser(name,userIdentification, email,birth,rol, hashedPass
 
 async function getAllUser(){
     const db = await connectToDatabase();
-    //  const [rows] = await db.query('SELECT * FROM tl_users');
     const [users] = await db.query(constans.getUsers);
     return users
+}
+
+async function updateUser(userId,name,userIdentification, email,birth,rol){
+    const db = await connectToDatabase();
+    const [result] =  await db.query(constans.updateUser, 
+        [birth, email,name,rol,parseInt(userIdentification) , userId]);
+    return result;
+}
+async function updatePassword(userId,password){
+    const db = await connectToDatabase();
+    const [result] =  await db.query(constans.updatePassword, 
+        [password, userId]);
+    return result;
+}
+
+async function deleteUser(userId){
+    const db = await connectToDatabase();
+    const [result] = await db.query(constans.deleteUser, [userId]);
+    return result;
 }
 
 export const queries = {
     checkUserExists,
     registerUser,
-    getAllUser
+    getAllUser,
+    updateUser,
+    updatePassword,
+    deleteUser
+    
 }
