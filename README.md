@@ -45,13 +45,9 @@ Cada función está diseñada para manejar errores de manera efectiva, proporcio
 
 
 
-# Configuración del Entorno
+# Configuración de Variables de Entorno
 
-Para que la aplicación funcione correctamente después de descargar el repositorio, es necesario crear un archivo llamado `.env` en el directorio raíz del proyecto. Este archivo contendrá las variables de entorno que la aplicación necesita para conectarse a la base de datos y manejar la autenticación.
-
-## Variables de Entorno
-
-Crea un archivo `.env` y añade las siguientes variables:
+Para que la API funcione correctamente, debes crear un archivo `.env` en la raíz de tu proyecto con las siguientes variables de entorno:
 
 ```plaintext
 DB_HOST= "tu_host"           # Dirección del servidor de la base de datos (por ejemplo, "localhost" o "127.0.0.1")
@@ -59,7 +55,8 @@ DB_USER= "tu_usuario"        # Nombre de usuario para acceder a la base de datos
 DB_PASSWORD= "tu_contraseña"  # Contraseña del usuario de la base de datos
 DB_NAME= "tu_nombre_bd"       # Nombre de la base de datos que utilizarás
 JWT_KEY= "tu_clave_secreta"   # Clave secreta utilizada para firmar los tokens JWT
-DB_TABLE_NAME = "tu_nombre_tabla" # Nombre de la tabla de la base de datos
+DB_TABLE_NAME= "tu_nombre_tabla"  # Nombre de la tabla de la base de datos
+
 
 # Pruebas de la API
 
