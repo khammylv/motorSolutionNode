@@ -79,6 +79,4 @@ La documentación de la API está disponible en el siguiente enlace:
 ## Conclusión
 
 La API de Motor Solution es una herramienta vital para la gestión de usuarios en la aplicación. Ofrece un conjunto robusto de funcionalidades que permiten a los administradores y usuarios interactuar con el sistema de manera segura y eficiente. Con un enfoque en la seguridad y la facilidad de uso, esta API asegura que las operaciones relacionadas con la gestión de usuarios sean rápidas y efectivas.
-```
 
-Este formato está listo para ser usado como archivo README. Solo tienes que copiar y pegarlo en tu proyecto.
