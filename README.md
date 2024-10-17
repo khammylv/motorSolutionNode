@@ -50,10 +50,6 @@ Para que la API funcione correctamente, debes crear un archivo `.env` en la raí
 
 ```markdown
 
-
-
-
-```plaintext
 DB_HOST= "tu_host"           # Dirección del servidor de la base de datos (por ejemplo, "localhost" o "127.0.0.1")
 DB_USER= "tu_usuario"        # Nombre de usuario para acceder a la base de datos
 DB_PASSWORD= "tu_contraseña"  # Contraseña del usuario de la base de datos
