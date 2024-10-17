@@ -46,8 +46,12 @@ Cada función está diseñada para manejar errores de manera efectiva, proporcio
 
 
 # Configuración de Variables de Entorno
-
 Para que la API funcione correctamente, debes crear un archivo `.env` en la raíz de tu proyecto con las siguientes variables de entorno:
+
+```markdown
+
+
+
 
 ```plaintext
 DB_HOST= "tu_host"           # Dirección del servidor de la base de datos (por ejemplo, "localhost" o "127.0.0.1")
@@ -56,7 +60,7 @@ DB_PASSWORD= "tu_contraseña"  # Contraseña del usuario de la base de datos
 DB_NAME= "tu_nombre_bd"       # Nombre de la base de datos que utilizarás
 JWT_KEY= "tu_clave_secreta"   # Clave secreta utilizada para firmar los tokens JWT
 DB_TABLE_NAME= "tu_nombre_tabla"  # Nombre de la tabla de la base de datos
-
+```
 
 # Pruebas de la API
 
@@ -74,6 +78,11 @@ La documentación de la API está disponible en el siguiente enlace:
 
    ```bash
    npm run dev
+   ```
 
 ## Conclusión
+
 La API de Motor Solution es una herramienta vital para la gestión de usuarios en la aplicación. Ofrece un conjunto robusto de funcionalidades que permiten a los administradores y usuarios interactuar con el sistema de manera segura y eficiente. Con un enfoque en la seguridad y la facilidad de uso, esta API asegura que las operaciones relacionadas con la gestión de usuarios sean rápidas y efectivas.
+```
+
+Este formato está listo para ser usado como archivo README. Solo tienes que copiar y pegarlo en tu proyecto.
