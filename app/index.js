@@ -3,7 +3,7 @@ import { methods as authentication } from "./controllers/auth.controllers.js";
 import { methods as users } from "./controllers/userController.js";
 import dotenv from 'dotenv';
 import { swaggerDocs as swaggerDocsV1 } from './swagger.js';
-
+import cors from 'cors';
 dotenv.config();
 
 //Server
@@ -17,6 +17,7 @@ app.listen(port, () => {
 });
 
 //Configuration
+app.use(cors());
 app.use(express.json());
 
 //Routes
