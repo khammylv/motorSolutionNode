@@ -7,7 +7,10 @@ async function login(req, res) {
     const {email, password} = req.body;
     try{
         const [userExists] = await queries.checkUserExists(email, "", "");
-        if(userExists.length === 0) {
+        
+        
+        if(userExists === undefined) {
+    
             return res.status(404).json({message : "Usuario no existente."})
         }
          
@@ -15,12 +18,13 @@ async function login(req, res) {
       if(!isMatch) {
             return res.status(401).json({message : "Contraseña incorrecta."})
         }
-      
-       const token = tokens.generateToken(userExists.user_id);
+       console.log(userExists);
+       
+       const token = tokens.generateToken(userExists.user_id, userExists.name, userExists.rol);
        return res.status(201).json({ token: token });
     }
     catch (err) {
-        console.error(err);
+        console.error("error",err);
         return res.status(500).json(err.message);
     }
 
