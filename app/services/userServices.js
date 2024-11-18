@@ -16,7 +16,6 @@ async function registerUser(name,userIdentification, email,birth,rol, hashedPass
 }
 
 async function getAllUser(){
-    console.log('query => ', constans.getUsers)
     const db = await connectToDatabase();
     const [users] = await db.query(constans.getUsers);
     return users

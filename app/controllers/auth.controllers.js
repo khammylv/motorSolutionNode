@@ -33,10 +33,9 @@ async function login(req, res) {
 async function register(req, res) {
     const { name, userIdentification, email, birth, rol, password } = req.body;
     try {
-
+        
         const userExists = await queries.checkUserExists(email, userIdentification, "");
         const validationUser = validation(req.body);
-
         if (userExists.length != 0 || validationUser) {
             return res.status(409).json({ message: "Hubo un error al agregar el usuario." });
         }

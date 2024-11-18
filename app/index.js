@@ -202,7 +202,7 @@ app.post("/api/register", authentication.register);
  *                   type: string
  *                   example: "Error interno del servidor."
  */
-app.get("/api/users", users.getUser);
+app.get("/api/users", users.getAllUser);
 
 /**
  * @swagger
@@ -401,3 +401,41 @@ app.put("/api/update-password", authentication.updatePassword);
  */
 app.delete("/api/delete-user/:id", users.deleteUser);
 
+/**
+ * @swagger
+ * /api/user/{id}:
+ *   get:
+ *     summary: Retrieve user by ID
+ *     description: Obtiene la información de un usuario específico a partir de su ID.
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: El ID del usuario a buscar.
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: ID del usuario.
+ *                 name:
+ *                   type: string
+ *                   description: Nombre del usuario.
+ *                 email:
+ *                   type: string
+ *                   description: Correo electrónico del usuario.
+ *       404:
+ *         description: Usuario no encontrado.
+ *       500:
+ *         description: Error del servidor.
+ */
+app.get("/api/user/:id", users.getUser);

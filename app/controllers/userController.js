@@ -1,12 +1,23 @@
 import { queries } from '../services/userServices.js';
 
 
-async function getUser(req, res) {
+async function getAllUser(req, res) {
 
   try{
     const users = await queries.getAllUser();
-    console.log(users)
+
   return  res.status(200).json(users); 
+}
+  catch (err) {
+    console.error(err);
+    return res.status(500).json(err.message);
+}
+}
+async function getUser(req, res) {
+  const { id } = req.params;
+  try{
+    const user = await queries.checkUserExists("","",id);
+  return  res.status(200).json(user); 
 }
   catch (err) {
     console.error(err);
@@ -35,6 +46,7 @@ async function deleteUser(req, res) {
   const { id } = req.params;
   try{
     const result = await queries.deleteUser(id);
+    console.log(result)
     if (result.affectedRows > 0) {
         res.status(200).json({ message: 'Usuario eliminado' });
     } else {
@@ -47,7 +59,8 @@ async function deleteUser(req, res) {
 }
 
 export const methods = {
-    getUser,
+    getAllUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUser
 }
