@@ -1,5 +1,6 @@
 import express from 'express';
 import { methods as authentication } from "./controllers/auth.controllers.js";
+import { methods as clients } from "./controllers/clientController.js";
 import { methods as users } from "./controllers/userController.js";
 import dotenv from 'dotenv';
 import { swaggerDocs as swaggerDocsV1 } from './swagger.js';
@@ -206,6 +207,45 @@ app.get("/api/users", users.getAllUser);
 
 /**
  * @swagger
+ * /api/user/{id}:
+ *   get:
+ *     summary: Retrieve user by ID
+ *     description: Obtiene la información de un usuario específico a partir de su ID.
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: El ID del usuario a buscar.
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: ID del usuario.
+ *                 name:
+ *                   type: string
+ *                   description: Nombre del usuario.
+ *                 email:
+ *                   type: string
+ *                   description: Correo electrónico del usuario.
+ *       404:
+ *         description: Usuario no encontrado.
+ *       500:
+ *         description: Error del servidor.
+ */
+app.get("/api/user/:id", users.getUser);
+
+/**
+ * @swagger
  * /api/update-user:
  *   put:
  *     tags:
@@ -401,24 +441,127 @@ app.put("/api/update-password", authentication.updatePassword);
  */
 app.delete("/api/delete-user/:id", users.deleteUser);
 
+
+
+//CLIENT ROUTES
+
+
 /**
  * @swagger
- * /api/user/{id}:
- *   get:
- *     summary: Retrieve user by ID
- *     description: Obtiene la información de un usuario específico a partir de su ID.
+ * /api/register-client:
+ *   post:
  *     tags:
- *       - Users
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: El ID del usuario a buscar.
+ *       - Clients
+ *     summary: Registra un nuevo cliente
+ *     description: Crea un cliente en el sistema utilizando un correo electrónico, un nombre y una identificación. Verifica si ya existe un cliente con la misma información antes de registrarlo.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Correo electrónico del cliente.
+ *                 example: cliente@example.com
+ *               name:
+ *                 type: string
+ *                 description: Nombre del cliente.
+ *                 example: Juan Pérez
+ *               clientIdentification:
+ *                 type: string
+ *                 description: Identificación única del cliente.
+ *                 example: 123456789
+ *     responses:
+ *       201:
+ *         description: Cliente creado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Cliente creado exitosamente.
+ *       409:
+ *         description: Hubo un error al agregar el cliente, ya existe o datos inválidos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Hubo un error al agregar el cliente.
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.post("/api/register-client", clients.registerClient);
+
+/**
+ * @swagger
+ * /api/clients:
+ *   get:
+ *     tags:
+ *       - Clients
+ *     summary: Obtiene la lista de todos los clientes
+ *     description: Recupera un listado completo de todos los clientes registrados en el sistema.
  *     responses:
  *       200:
- *         description: Usuario encontrado exitosamente.
+ *         description: Lista de clientes recuperada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: 123456789
+ *                   name:
+ *                     type: string
+ *                     example: Juan Pérez
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     example: cliente@example.com
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.get("/api/clients", clients.getAllClient);
+
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   get:
+ *     tags:
+ *       - Clients
+ *     summary: Obtiene la información de un cliente
+ *     description: Recupera los datos de un cliente existente en el sistema mediante su identificación única.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Identificación única del cliente.
+ *         schema:
+ *           type: string
+ *           example: 123456789
+ *     responses:
+ *       200:
+ *         description: Información del cliente recuperada exitosamente.
  *         content:
  *           application/json:
  *             schema:
@@ -426,16 +569,141 @@ app.delete("/api/delete-user/:id", users.deleteUser);
  *               properties:
  *                 id:
  *                   type: string
- *                   description: ID del usuario.
+ *                   example: 123456789
  *                 name:
  *                   type: string
- *                   description: Nombre del usuario.
+ *                   example: Juan Pérez
  *                 email:
  *                   type: string
- *                   description: Correo electrónico del usuario.
+ *                   format: email
+ *                   example: cliente@example.com
  *       404:
- *         description: Usuario no encontrado.
+ *         description: Cliente no encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Cliente no encontrado.
  *       500:
- *         description: Error del servidor.
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
  */
-app.get("/api/user/:id", users.getUser);
+app.get("/api/client/:id", clients.getClient);
+
+/**
+ * @swagger
+ * /api/clients:
+ *   put:
+ *     tags:
+ *       - Clients
+ *     summary: Actualiza la información de un cliente
+ *     description: Permite actualizar los datos de un cliente existente en el sistema.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               client_id:
+ *                 type: string
+ *                 description: Identificación única del cliente.
+ *                 example: 123456
+ *               name:
+ *                 type: string
+ *                 description: Nuevo nombre del cliente.
+ *                 example: Juan Pérez
+ *               client_identification:
+ *                 type: string
+ *                 description: Nueva identificación del cliente.
+ *                 example: 987654321
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Nuevo correo electrónico del cliente.
+ *                 example: juan.perez@example.com
+ *     responses:
+ *       200:
+ *         description: Cliente actualizado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Cliente actualizado.
+ *       400:
+ *         description: No se pudo actualizar el cliente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se pudo actualizar el cliente.
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.put("/api/update-client", clients.updateClient);
+
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   delete:
+ *     tags:
+ *       - Clients
+ *     summary: Elimina un cliente
+ *     description: Permite eliminar un cliente existente en el sistema mediante su identificación única.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Identificación única del cliente a eliminar.
+ *         schema:
+ *           type: string
+ *           example: 123456789
+ *     responses:
+ *       200:
+ *         description: Cliente eliminado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Cliente eliminado.
+ *       400:
+ *         description: No se pudo eliminar el cliente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se pudo eliminar el cliente.
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.delete("/api/delete-client/:id", clients.deleteClient);
+

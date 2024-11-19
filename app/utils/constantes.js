@@ -11,6 +11,19 @@ const getUsers = `SELECT * FROM ${process.env.DB_TABLE_NAME}`;
 const updateUser = `UPDATE ${process.env.DB_TABLE_NAME} SET birth= ?, email= ?,name = ?,rol= ? ,user_identification= ? WHERE user_id = ?`;
 const updatePassword = `UPDATE ${process.env.DB_TABLE_NAME} SET password = ? WHERE user_id = ?`;
 const deleteUser = `DELETE FROM ${process.env.DB_TABLE_NAME} WHERE user_id = ?`;
+
+const query_validate_client = `SELECT * FROM ${process.env.DB_TABLE_CLIENT} WHERE client_id = ? OR 	client_identification = ? OR email = ?`;
+const client_register = `INSERT INTO ${process.env.DB_TABLE_CLIENT} (email, name, client_identification) VALUES (?,?,?)`;
+const getClients = `SELECT * FROM ${process.env.DB_TABLE_CLIENT}`;
+const updateClient= `UPDATE ${process.env.DB_TABLE_CLIENT} SET email = ? , name = ? , client_identification = ? WHERE client_id = ?`;
+const deleteClient = `DELETE FROM ${process.env.DB_TABLE_CLIENT} WHERE client_id = ?`;
+
+const query_validate_vehicle = `SELECT * FROM ${process.env.DB_TABLE_VEHICLE} WHERE id_vehicle =? OR id_client = ?`;
+const vehicleRegister = `INSERT INTO ${process.env.DB_VEHICLE_NAME} (id_client, brand_vehicle, model_vehicle, plate_vehicle, repair_description) VALUES (?,?,?,?,?)`;
+const getVehicle = `SELECT * FROM ${process.env.DB_VEHICLE_NAME}`;
+const udpateVehicle = `UPDATE ${process.env.DB_VEHICLE_NAME} SET id_client=?,brand_vehicle= ?,model_vehicle= ?,plate_vehicle= ? ,repair_description = ? WHERE id_vehicle = ? `;
+const deleteVehicle = `DELETE FROM ${process.env.DB_VEHICLE_NAME} WHERE id_vehicle = ?`
+
 export const constans = {
     query_validate,
     register,
@@ -20,3 +33,19 @@ export const constans = {
     deleteUser
 };
 
+
+export const clientConstans = {
+    query_validate_client,
+    client_register,
+    getClients,
+    updateClient,
+    deleteClient
+}
+
+export const vehicleConstans = {
+    query_validate_vehicle,
+    vehicleRegister,
+    getVehicle,
+    udpateVehicle,
+    deleteVehicle
+}
