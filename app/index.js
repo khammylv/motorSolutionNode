@@ -6,6 +6,7 @@ import { methods as vehicles } from "./controllers/vehicleController.js";
 import dotenv from 'dotenv';
 import { swaggerDocs as swaggerDocsV1 } from './swagger.js';
 import cors from 'cors';
+import { tokens } from './utils/token.js';
 dotenv.config();
 
 //Server
@@ -20,6 +21,11 @@ app.listen(port, () => {
 //Configuration
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
+
+
+app.get('/data', tokens.verifyToken, (req, res) => {
+    res.json({ message: 'Datos protegidos'});
+});
 
 //Routes
 
@@ -91,15 +97,28 @@ app.use(express.json());
 app.post("/api/login", authentication.login);
 
 
-// Ruta para registrar usuarios
 /**
  * @swagger
- * /api/register:
+ * components:
+ *   securitySchemes:
+ *     SecretKeyAuth:
+ *       type: apiKey
+ *       in: header
+ *       name: x-secret-key
+ *       description: Autenticación basada en una palabra secreta en las cabeceras.
+ *       x-secret-key: "mySecretWord123"  # Este es solo un ejemplo para documentación, la clave real debe ser gestionada de forma segura.
+ * 
+ * security:
+ *   - SecretKeyAuth: []  # Aplica la autenticación basada en la palabra secreta a todas las rutas
+ *
+ * /api/register-admind:
  *   post:
  *     tags:
  *       - Users
- *     summary: Registrar un nuevo usuario
- *     description: Registra un nuevo usuario proporcionando nombre, correo, identificación, fecha de nacimiento, rol y contraseña.
+ *     summary: Registrar un nuevo usuario administrador principal  la secret key "secret_key_swagger
+ *     description: Registra un nuevo usuario administrador proporcionando nombre, correo, identificación, fecha de nacimiento, rol y contraseña".
+ *     security:
+ *       - SecretKeyAuth: []  # Seguridad aplicada a esta ruta
  *     requestBody:
  *       required: true
  *       content:
@@ -149,7 +168,7 @@ app.post("/api/login", authentication.login);
  *                   type: string
  *                   example: "Hubo un error al agregar el usuario."
  *       500:
- *         description: Error en la creacion del usuario
+ *         description: Error en la creación del usuario
  *         content:
  *           application/json:
  *             schema:
@@ -159,7 +178,85 @@ app.post("/api/login", authentication.login);
  *                   type: string
  *                   example: "Respuesta de error del servidor"
  */
-app.post("/api/register", authentication.register);
+app.post("/api/register-admind", tokens.checkSecretKey, authentication.register);
+
+// Ruta para registrar usuarios
+/**
+ * @swagger
+ * /api/register:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Registrar un nuevo usuario
+ *     description: Registra un nuevo usuario proporcionando nombre, correo, identificación, fecha de nacimiento, rol y contraseña.
+ *     security:
+ *       - BearerAuth: []  # Requiere un token JWT para autenticar la solicitud
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Juan Pérez"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "juan.perez02@example.com"
+ *               userIdentification:
+ *                 type: number
+ *                 example: 123456785
+ *               birth:
+ *                 type: string
+ *                 format: date
+ *                 example: "1990-01-01"
+ *               rol:
+ *                 type: string
+ *                 example: "administrador"
+ *               password:
+ *                 type: string
+ *                 example: "contraseña_segura"
+ *     responses:
+ *       201:
+ *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuario registrado exitosamente"
+ *       409:
+ *         description: Usuario ya existente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Hubo un error al agregar el usuario."
+ *       500:
+ *         description: Error en la creación del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Respuesta de error del servidor"
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
+ */
+app.post("/api/register", tokens.verifyToken, authentication.register);
 
 /**
  * @swagger
@@ -169,6 +266,8 @@ app.post("/api/register", authentication.register);
  *       - Users
  *     summary: Obtener todos los usuarios
  *     description: Permite obtener una lista de todos los usuarios registrados en el sistema.
+ *     security:
+ *       - BearerAuth: []  # Requiere un token JWT para autenticar la solicitud
  *     responses:
  *       200:
  *         description: Lista de usuarios obtenida exitosamente.
@@ -202,8 +301,14 @@ app.post("/api/register", authentication.register);
  *                 message:
  *                   type: string
  *                   example: "Error interno del servidor."
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/users", users.getAllUser);
+app.get("/api/users",tokens.verifyToken, users.getAllUser);
 
 /**
  * @swagger
@@ -213,6 +318,8 @@ app.get("/api/users", users.getAllUser);
  *     description: Obtiene la información de un usuario específico a partir de su ID.
  *     tags:
  *       - Users
+ *     security:
+ *       - BearerAuth: []  # Requiere un token JWT para autenticar la solicitud
  *     parameters:
  *       - in: path
  *         name: id
@@ -241,8 +348,14 @@ app.get("/api/users", users.getAllUser);
  *         description: Usuario no encontrado.
  *       500:
  *         description: Error del servidor.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/user/:id", users.getUser);
+app.get("/api/user/:id",tokens.verifyToken, users.getUser);
 
 /**
  * @swagger
@@ -252,6 +365,8 @@ app.get("/api/user/:id", users.getUser);
  *       - Users
  *     summary: Actualizar información de un usuario
  *     description: Permite actualizar la información de un usuario proporcionando su ID y los nuevos datos.
+ *     security:
+ *       - BearerAuth: []  # Requiere un token JWT para autenticar la solicitud
  *     requestBody:
  *       required: true
  *       content:
@@ -310,8 +425,14 @@ app.get("/api/user/:id", users.getUser);
  *                 message:
  *                   type: string
  *                   example: "Error interno del servidor."
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.put("/api/update-user", users.updateUser);
+app.put("/api/update-user", tokens.verifyToken, users.updateUser);
 
 /**
  * @swagger
@@ -321,6 +442,8 @@ app.put("/api/update-user", users.updateUser);
  *       - Users
  *     summary: Actualizar la contraseña de un usuario
  *     description: Permite a un usuario actualizar su contraseña proporcionando la contraseña actual y la nueva.
+ *     security:
+ *       - BearerAuth: []  # Requiere un token JWT para autenticar la solicitud
  *     requestBody:
  *       required: true
  *       content:
@@ -388,8 +511,14 @@ app.put("/api/update-user", users.updateUser);
  *                 message:
  *                   type: string
  *                   example: "Error interno del servidor."
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.put("/api/update-password", authentication.updatePassword);
+app.put("/api/update-password", tokens.verifyToken, authentication.updatePassword);
 
 /**
  * @swagger
@@ -399,6 +528,8 @@ app.put("/api/update-password", authentication.updatePassword);
  *       - Users
  *     summary: Eliminar un usuario
  *     description: Permite eliminar un usuario proporcionando su ID.
+ *     security:
+ *       - BearerAuth: []  # Requiere un token JWT para autenticar la solicitud
  *     parameters:
  *       - name: id
  *         in: path
@@ -438,8 +569,14 @@ app.put("/api/update-password", authentication.updatePassword);
  *                 message:
  *                   type: string
  *                   example: "Error interno del servidor."
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.delete("/api/delete-user/:id", users.deleteUser);
+app.delete("/api/delete-user/:id",tokens.verifyToken, users.deleteUser);
 
 
 
@@ -454,6 +591,8 @@ app.delete("/api/delete-user/:id", users.deleteUser);
  *       - Clients
  *     summary: Registra un nuevo cliente
  *     description: Crea un cliente en el sistema utilizando un correo electrónico, un nombre y una identificación. Verifica si ya existe un cliente con la misma información antes de registrarlo.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     requestBody:
  *       required: true
  *       content:
@@ -502,8 +641,14 @@ app.delete("/api/delete-user/:id", users.deleteUser);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.post("/api/register-client", clients.registerClient);
+app.post("/api/register-client", tokens.verifyToken,  clients.registerClient);
 
 /**
  * @swagger
@@ -513,6 +658,8 @@ app.post("/api/register-client", clients.registerClient);
  *       - Clients
  *     summary: Obtiene la lista de todos los clientes
  *     description: Recupera un listado completo de todos los clientes registrados en el sistema.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     responses:
  *       200:
  *         description: Lista de clientes recuperada exitosamente.
@@ -540,17 +687,25 @@ app.post("/api/register-client", clients.registerClient);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/clients", clients.getAllClient);
+app.get("/api/clients",tokens.verifyToken, clients.getAllClient);
 
 /**
  * @swagger
- * /api/clients/{id}:
+ * /api/client/{id}:
  *   get:
  *     tags:
  *       - Clients
  *     summary: Obtiene la información de un cliente
  *     description: Recupera los datos de un cliente existente en el sistema mediante su identificación única.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     parameters:
  *       - name: id
  *         in: path
@@ -594,8 +749,14 @@ app.get("/api/clients", clients.getAllClient);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/client/:id", clients.getClient);
+app.get("/api/client/:id",tokens.verifyToken, clients.getClient);
 
 /**
  * @swagger
@@ -605,6 +766,8 @@ app.get("/api/client/:id", clients.getClient);
  *       - Clients
  *     summary: Actualiza la información de un cliente
  *     description: Permite actualizar los datos de un cliente existente en el sistema.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     requestBody:
  *       required: true
  *       content:
@@ -657,8 +820,14 @@ app.get("/api/client/:id", clients.getClient);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.put("/api/update-client", clients.updateClient);
+app.put("/api/update-client",tokens.verifyToken, clients.updateClient);
 
 /**
  * @swagger
@@ -668,6 +837,8 @@ app.put("/api/update-client", clients.updateClient);
  *       - Clients
  *     summary: Elimina un cliente
  *     description: Permite eliminar un cliente existente en el sistema mediante su identificación única.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     parameters:
  *       - name: id
  *         in: path
@@ -676,6 +847,13 @@ app.put("/api/update-client", clients.updateClient);
  *         schema:
  *           type: string
  *           example: 123456789
+ *       - name: Authorization
+ *         in: header
+ *         required: true
+ *         description: Token JWT para autenticar la solicitud.
+ *         schema:
+ *           type: string
+ *           example: "Bearer {tu_token_jwt}"
  *     responses:
  *       200:
  *         description: Cliente eliminado exitosamente.
@@ -704,8 +882,14 @@ app.put("/api/update-client", clients.updateClient);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.delete("/api/delete-client/:id", clients.deleteClient);
+app.delete("/api/delete-client/:id",tokens.verifyToken, clients.deleteClient);
 
 //VEHICLES
 
@@ -717,6 +901,8 @@ app.delete("/api/delete-client/:id", clients.deleteClient);
  *       - Vehicles
  *     summary: Registra un vehículo
  *     description: Crea un nuevo registro de vehículo asociado a un cliente.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     requestBody:
  *       description: Datos del vehículo a registrar.
  *       required: true
@@ -778,8 +964,14 @@ app.delete("/api/delete-client/:id", clients.deleteClient);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.post("/api/register-vehicle", vehicles.registerVehicle);
+app.post("/api/register-vehicle",tokens.verifyToken, vehicles.registerVehicle);
 
 /**
  * @swagger
@@ -789,6 +981,8 @@ app.post("/api/register-vehicle", vehicles.registerVehicle);
  *       - Vehicles
  *     summary: Obtiene todos los vehículos
  *     description: Recupera una lista de todos los vehículos registrados en el sistema.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     responses:
  *       200:
  *         description: Lista de vehículos recuperada exitosamente.
@@ -830,8 +1024,14 @@ app.post("/api/register-vehicle", vehicles.registerVehicle);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/vehicles", vehicles.getAllVehicle);
+app.get("/api/vehicles",tokens.verifyToken, vehicles.getAllVehicle);
 
 /**
  * @swagger
@@ -841,6 +1041,8 @@ app.get("/api/vehicles", vehicles.getAllVehicle);
  *       - Vehicles
  *     summary: Obtiene un vehículo por su ID
  *     description: Recupera los detalles de un vehículo específico utilizando su ID.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     parameters:
  *       - name: id
  *         in: path
@@ -898,8 +1100,14 @@ app.get("/api/vehicles", vehicles.getAllVehicle);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/vehicle/:id", vehicles.getVehicle);
+app.get("/api/vehicle/:id",tokens.verifyToken, vehicles.getVehicle);
 
 /**
  * @swagger
@@ -909,6 +1117,8 @@ app.get("/api/vehicle/:id", vehicles.getVehicle);
  *       - Vehicles
  *     summary: Obtiene vehículos por ID del cliente
  *     description: Recupera todos los vehículos asociados a un cliente específico utilizando su ID.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     parameters:
  *       - name: id
  *         in: path
@@ -968,8 +1178,14 @@ app.get("/api/vehicle/:id", vehicles.getVehicle);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.get("/api/client-vehicles/:id", vehicles.getVehicleByClient);
+app.get("/api/client-vehicles/:id",tokens.verifyToken, vehicles.getVehicleByClient);
 
 /**
  * @swagger
@@ -979,6 +1195,8 @@ app.get("/api/client-vehicles/:id", vehicles.getVehicleByClient);
  *       - Vehicles
  *     summary: Actualiza un vehículo
  *     description: Actualiza la información de un vehículo existente en el sistema.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     requestBody:
  *       description: Datos actualizados del vehículo.
  *       required: true
@@ -1045,8 +1263,14 @@ app.get("/api/client-vehicles/:id", vehicles.getVehicleByClient);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.put("/api/update-vehicle", vehicles.updateVehicle);
+app.put("/api/update-vehicle",tokens.verifyToken, vehicles.updateVehicle);
 
 /**
  * @swagger
@@ -1055,7 +1279,9 @@ app.put("/api/update-vehicle", vehicles.updateVehicle);
  *     tags:
  *       - Vehicles
  *     summary: Elimina un vehículo
- *     description: Elimina un vehículo existente del sistema utilizando su ID único.
+ *     description: Elimina un vehículo existente del sistema utilizando su ID único. Requiere autenticación.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
  *     parameters:
  *       - name: id
  *         in: path
@@ -1074,7 +1300,7 @@ app.put("/api/update-vehicle", vehicles.updateVehicle);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Vehiculo eliminado
+ *                   example: Vehículo eliminado
  *       400:
  *         description: No se pudo eliminar el vehículo.
  *         content:
@@ -1084,7 +1310,17 @@ app.put("/api/update-vehicle", vehicles.updateVehicle);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: No se pudo eliminar el vehiculo
+ *                   example: No se pudo eliminar el vehículo
+ *       401:
+ *         description: Token de autorización no proporcionado o inválido.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Acceso denegado. No se encontró el token.
  *       500:
  *         description: Error interno del servidor.
  *         content:
@@ -1092,5 +1328,11 @@ app.put("/api/update-vehicle", vehicles.updateVehicle);
  *             schema:
  *               type: string
  *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
  */
-app.delete("/api/delete-vehicle/:id", vehicles.deleteVehicle);
+app.delete("/api/delete-vehicle/:id",tokens.verifyToken, vehicles.deleteVehicle);
