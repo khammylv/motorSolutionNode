@@ -2,6 +2,7 @@ import express from 'express';
 import { methods as authentication } from "./controllers/auth.controllers.js";
 import { methods as clients } from "./controllers/clientController.js";
 import { methods as users } from "./controllers/userController.js";
+import { methods as vehicles } from "./controllers/vehicleController.js";
 import dotenv from 'dotenv';
 import { swaggerDocs as swaggerDocsV1 } from './swagger.js';
 import cors from 'cors';
@@ -12,7 +13,6 @@ const app = express();
 const port = 4000;
 
 app.listen(port, () => {
-    console.log('env db name =>', process.env.DB_TABLE_NAME);
     console.log(`Server running on port ${port}`);
     swaggerDocsV1(app, port);
 });
@@ -662,7 +662,7 @@ app.put("/api/update-client", clients.updateClient);
 
 /**
  * @swagger
- * /api/clients/{id}:
+ * /api/delete-client/{id}:
  *   delete:
  *     tags:
  *       - Clients
@@ -707,3 +707,390 @@ app.put("/api/update-client", clients.updateClient);
  */
 app.delete("/api/delete-client/:id", clients.deleteClient);
 
+//VEHICLES
+
+/**
+ * @swagger
+ * /api/register-vehicle:
+ *   post:
+ *     tags:
+ *       - Vehicles
+ *     summary: Registra un vehículo
+ *     description: Crea un nuevo registro de vehículo asociado a un cliente.
+ *     requestBody:
+ *       description: Datos del vehículo a registrar.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idClient:
+ *                 type: string
+ *                 description: ID del cliente asociado al vehículo.
+ *                 example: "12345"
+ *               brand:
+ *                 type: string
+ *                 description: Marca del vehículo.
+ *                 example: "Toyota"
+ *               model:
+ *                 type: string
+ *                 description: Modelo del vehículo.
+ *                 example: "Corolla"
+ *               plate:
+ *                 type: string
+ *                 description: Placa del vehículo.
+ *                 example: "ABC123"
+ *               repair_description:
+ *                 type: string
+ *                 description: Descripción de la reparación.
+ *                 example: "Cambio de aceite"
+ *             required:
+ *               - idClient
+ *               - brand
+ *               - model
+ *               - plate
+ *     responses:
+ *       201:
+ *         description: Vehículo creado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Vehiculo creado exitosamente.
+ *       409:
+ *         description: Error al registrar el vehículo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Hubo un error al agregar el vehiculo.
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.post("/api/register-vehicle", vehicles.registerVehicle);
+
+/**
+ * @swagger
+ * /api/vehicles:
+ *   get:
+ *     tags:
+ *       - Vehicles
+ *     summary: Obtiene todos los vehículos
+ *     description: Recupera una lista de todos los vehículos registrados en el sistema.
+ *     responses:
+ *       200:
+ *         description: Lista de vehículos recuperada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: ID único del vehículo.
+ *                     example: "1"
+ *                   idClient:
+ *                     type: string
+ *                     description: ID del cliente asociado al vehículo.
+ *                     example: "12345"
+ *                   brand:
+ *                     type: string
+ *                     description: Marca del vehículo.
+ *                     example: "Toyota"
+ *                   model:
+ *                     type: string
+ *                     description: Modelo del vehículo.
+ *                     example: "Corolla"
+ *                   plate:
+ *                     type: string
+ *                     description: Placa del vehículo.
+ *                     example: "ABC123"
+ *                   repair_description:
+ *                     type: string
+ *                     description: Descripción de la reparación.
+ *                     example: "Cambio de aceite"
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.get("/api/vehicles", vehicles.getAllVehicle);
+
+/**
+ * @swagger
+ * /api/vehicle/{id}:
+ *   get:
+ *     tags:
+ *       - Vehicles
+ *     summary: Obtiene un vehículo por su ID
+ *     description: Recupera los detalles de un vehículo específico utilizando su ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID único del vehículo.
+ *         schema:
+ *           type: string
+ *           example: "1"
+ *     responses:
+ *       200:
+ *         description: Detalles del vehículo recuperados exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: ID único del vehículo.
+ *                   example: "1"
+ *                 idClient:
+ *                   type: string
+ *                   description: ID del cliente asociado al vehículo.
+ *                   example: "12345"
+ *                 brand:
+ *                   type: string
+ *                   description: Marca del vehículo.
+ *                   example: "Toyota"
+ *                 model:
+ *                   type: string
+ *                   description: Modelo del vehículo.
+ *                   example: "Corolla"
+ *                 plate:
+ *                   type: string
+ *                   description: Placa del vehículo.
+ *                   example: "ABC123"
+ *                 repair_description:
+ *                   type: string
+ *                   description: Descripción de la reparación.
+ *                   example: "Cambio de aceite"
+ *       404:
+ *         description: El vehículo no fue encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Vehículo no encontrado.
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.get("/api/vehicle/:id", vehicles.getVehicle);
+
+/**
+ * @swagger
+ * /api/client-vehicles/{id}:
+ *   get:
+ *     tags:
+ *       - Vehicles
+ *     summary: Obtiene vehículos por ID del cliente
+ *     description: Recupera todos los vehículos asociados a un cliente específico utilizando su ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID único del cliente.
+ *         schema:
+ *           type: string
+ *           example: "12345"
+ *     responses:
+ *       200:
+ *         description: Lista de vehículos asociados al cliente recuperada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: ID único del vehículo.
+ *                     example: "1"
+ *                   idClient:
+ *                     type: string
+ *                     description: ID del cliente asociado al vehículo.
+ *                     example: "12345"
+ *                   brand:
+ *                     type: string
+ *                     description: Marca del vehículo.
+ *                     example: "Toyota"
+ *                   model:
+ *                     type: string
+ *                     description: Modelo del vehículo.
+ *                     example: "Corolla"
+ *                   plate:
+ *                     type: string
+ *                     description: Placa del vehículo.
+ *                     example: "ABC123"
+ *                   repair_description:
+ *                     type: string
+ *                     description: Descripción de la reparación.
+ *                     example: "Cambio de aceite"
+ *       404:
+ *         description: No se encontraron vehículos para el cliente proporcionado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se encontraron vehículos para este cliente.
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.get("/api/client-vehicles/:id", vehicles.getVehicleByClient);
+
+/**
+ * @swagger
+ * /api/update-vehicle:
+ *   put:
+ *     tags:
+ *       - Vehicles
+ *     summary: Actualiza un vehículo
+ *     description: Actualiza la información de un vehículo existente en el sistema.
+ *     requestBody:
+ *       description: Datos actualizados del vehículo.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               idVehicle:
+ *                 type: string
+ *                 description: ID único del vehículo.
+ *                 example: "1"
+ *               idClient:
+ *                 type: string
+ *                 description: ID del cliente asociado al vehículo.
+ *                 example: "12345"
+ *               brand:
+ *                 type: string
+ *                 description: Marca del vehículo.
+ *                 example: "Toyota"
+ *               model:
+ *                 type: string
+ *                 description: Modelo del vehículo.
+ *                 example: "Corolla"
+ *               plate:
+ *                 type: string
+ *                 description: Placa del vehículo.
+ *                 example: "ABC123"
+ *               repair_description:
+ *                 type: string
+ *                 description: Descripción de la reparación.
+ *                 example: "Cambio de aceite"
+ *             required:
+ *               - idVehicle
+ *               - idClient
+ *               - brand
+ *               - model
+ *               - plate
+ *     responses:
+ *       200:
+ *         description: Vehículo actualizado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Vehiculo actualizado
+ *       400:
+ *         description: No se pudo actualizar el vehículo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se pudo actualizar el vehiculo
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.put("/api/update-vehicle", vehicles.updateVehicle);
+
+/**
+ * @swagger
+ * /api/delete-vehicle/{id}:
+ *   delete:
+ *     tags:
+ *       - Vehicles
+ *     summary: Elimina un vehículo
+ *     description: Elimina un vehículo existente del sistema utilizando su ID único.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID único del vehículo a eliminar.
+ *         schema:
+ *           type: string
+ *           example: "1"
+ *     responses:
+ *       200:
+ *         description: Vehículo eliminado exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Vehiculo eliminado
+ *       400:
+ *         description: No se pudo eliminar el vehículo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se pudo eliminar el vehiculo
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ */
+app.delete("/api/delete-vehicle/:id", vehicles.deleteVehicle);

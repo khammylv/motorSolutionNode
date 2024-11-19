@@ -27,3 +27,18 @@ export const validationClient = (body) => {
 
   return false;
 }
+
+export const validationVehicle = (body) => {
+
+  if (!body) {
+    return true;
+  }
+
+  // Check if body has required fields
+  if (!body.idClient ||!body.brand ||!body.model || !body.plate || !body.repair_description) {
+    return true;
+  }
+
+
+  return false;
+}
