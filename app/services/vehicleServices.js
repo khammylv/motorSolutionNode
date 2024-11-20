@@ -3,7 +3,6 @@ import { vehicleConstans } from '../utils/constantes.js';
 
 
 async function checkVehicleExists(idVehicle,idClient, plate) {
-
     const db = await connectToDatabase();
     const [rows] = await db.query(vehicleConstans.query_validate_vehicle, [idVehicle, idClient, plate]);
     return rows;

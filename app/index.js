@@ -7,11 +7,13 @@ import dotenv from 'dotenv';
 import { swaggerDocs as swaggerDocsV1 } from './swagger.js';
 import cors from 'cors';
 import { tokens } from './utils/token.js';
+import {createTables} from './controllers/createTableController.js'
 dotenv.config();
 
 //Server
 const app = express();
 const port = 4000;
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
@@ -21,6 +23,15 @@ app.listen(port, () => {
 //Configuration
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
+
+
+//Create tables
+
+
+
+createTables.createTableUser();
+createTables.createTableClients();
+createTables.createTableVehicles();
 
 
 app.get('/data', tokens.verifyToken, (req, res) => {

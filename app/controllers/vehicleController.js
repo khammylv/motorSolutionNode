@@ -94,7 +94,6 @@ async function getAllVehicle(req, res) {
     const { id } = req.params;
     try{
       const result = await queries.deleteVehicle(id);
-      console.log(result)
       if (result.affectedRows > 0) {
           res.status(200).json({ message: 'Vehiculo eliminado' });
       } else {
