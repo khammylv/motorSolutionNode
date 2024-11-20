@@ -27,7 +27,7 @@ app.use(express.json());
 
 //Create tables
 
-
+//TODO una vez creadas las tablas comentar estas lineas
 
 createTables.createTableUser();
 createTables.createTableClients();
