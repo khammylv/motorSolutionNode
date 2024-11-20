@@ -39,8 +39,8 @@ La API incluye funcionalidades para realizar consultas y generar reportes:
 
 Esta API está diseñada para ser altamente escalable y segura, integrándose fácilmente con sistemas existentes y adaptándose a las necesidades de talleres de cualquier tamaño.
 
-# Configuración de Variables de Entorno
-Para que la API funcione correctamente, debes crear un archivo `.env` en la raíz de tu proyecto con las siguientes variables de entorno:
+# Configuración de la API
+Para que la API funcione correctamente, es necesario crear una base de datos en un servidor de bases de datos SQL, como MySQL o PostgreSQL. Las tablas se crearán automáticamente al iniciar el servidor. Sin embargo, antes de hacerlo, debes crear un archivo .env en la raíz de tu proyecto, con las siguientes variables de entorno:
 
 ```markdown
 
