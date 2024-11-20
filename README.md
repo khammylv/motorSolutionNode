@@ -1,49 +1,43 @@
 # API de Motor Solution
 
-La API de Motor Solution proporciona un conjunto de endpoints para gestionar la información de los usuarios en la aplicación. Estas funcionalidades permiten a los administradores y a los usuarios interactuar de manera efectiva con el sistema, garantizando un manejo seguro y eficiente de los datos.
+Nuestra API está diseñada para optimizar la gestión de talleres automotrices, ofreciendo un sistema integral para registrar y administrar usuarios, clientes y vehículos. A continuación, te presentamos sus principales funcionalidades:
 
-## Funcionalidades Principales
+#### 1. **Gestión de Usuarios**  
+La API permite la creación y administración de usuarios con roles específicos, asegurando un control eficiente sobre los permisos y accesos:  
+- **Administradores**: usuarios con acceso total al sistema, responsables de gestionar empleados, clientes y configuraciones generales.  
+- **Empleados**: usuarios con acceso limitado, enfocados en la atención al cliente y el registro de vehículos y sus visitas al taller.  
 
-### Registro de Usuarios (`/api/register`)
-La ruta de registro permite a nuevos usuarios crear una cuenta proporcionando información básica como nombre, correo electrónico, identificación, fecha de nacimiento, rol y contraseña. Este proceso asegura que todos los usuarios tengan credenciales únicas y verificables, lo cual es fundamental para la seguridad del sistema.
+##### Funciones principales:  
+- Registro de nuevos usuarios con datos básicos (nombre, correo electrónico, rol, contraseña).  
+- Autenticación y autorización según el rol asignado.  
+- Actualización y eliminación de perfiles de usuarios.  
 
-- **Método:** POST
-- **Cuerpo de Solicitud:** Incluye `name`, `email`, `password`, `identification`, `birth`, `rol`.
+#### 2. **Gestión de Clientes**  
+La API permite registrar clientes del taller, almacenando información clave para personalizar la experiencia del servicio.  
 
-### Inicio de Sesión (`/api/login`)
-Los usuarios existentes pueden iniciar sesión utilizando su correo electrónico y contraseña. La API verifica las credenciales y, si son válidas, genera un token de autenticación que permite al usuario acceder a recursos protegidos.
+##### Funciones principales:  
+- Registro de nuevos clientes con detalles como nombre, número de contacto y correo electrónico.  
+- Actualización de la información del cliente según sea necesario.  
+- Listado de clientes registrados, incluyendo historial de visitas.  
 
-- **Método:** POST
-- **Cuerpo de Solicitud:** Incluye `email`, `password`.
+#### 3. **Registro y Gestión de Vehículos**  
+El sistema facilita el registro de vehículos asociados a cada cliente, asegurando un seguimiento detallado de cada caso atendido en el taller.  
 
-### Actualización de Contraseña (`/api/update-password`)
-Los usuarios pueden actualizar su contraseña proporcionando su contraseña actual y la nueva. Este proceso incluye validaciones para garantizar que la nueva contraseña no sea igual a la anterior y que la contraseña actual sea correcta.
+##### Funciones principales:  
+- Asociación de vehículos a un cliente específico, con datos como marca, modelo, año y matrícula.  
+- Registro detallado de la visita al taller:  
+  - Fecha de ingreso.  
+  - Razón de la visita (ejemplo: mantenimiento preventivo, reparación específica, diagnóstico técnico).  
+  - Observaciones adicionales.  
+- Historial completo de visitas por vehículo para consultas futuras.  
 
-- **Método:** PUT
-- **Cuerpo de Solicitud:** Incluye `user_id`, `oldPassword`, `newPassword`.
+#### 4. **Consulta de Información y Reportes**  
+La API incluye funcionalidades para realizar consultas y generar reportes:  
+- Historial de clientes y vehículos.  
+- Razones más comunes de visitas al taller.  
+- Desempeño de empleados en la atención al cliente.  
 
-### Recuperación de Usuarios (`/api/get-user`)
-Permite a los administradores recuperar la lista de todos los usuarios en el sistema. Esta función es esencial para la gestión y supervisión de usuarios, facilitando la toma de decisiones informadas.
-
-- **Método:** GET
-
-### Actualización de Información del Usuario (`/api/update-user`)
-Los administradores pueden actualizar la información de un usuario, incluyendo su nombre, identificación, correo electrónico, fecha de nacimiento y rol. Esta funcionalidad es crucial para mantener la información actualizada y relevante.
-
-- **Método:** PUT
-- **Cuerpo de Solicitud:** Incluye `user_id`, `name`, `user_identification`, `email`, `birth`, `rol`.
-
-### Eliminación de Usuarios (`/api/delete-user/{id}`)
-Permite la eliminación de un usuario específico del sistema utilizando su ID. Esta función es fundamental para gestionar la base de datos y asegurar que los usuarios no deseados sean eliminados de manera efectiva.
-
-- **Método:** DELETE
-- **Parámetro:** `id` en la ruta.
-
-## Manejo de Errores
-Cada función está diseñada para manejar errores de manera efectiva, proporcionando respuestas claras en caso de que algo salga mal. Los errores pueden incluir problemas de validación, errores en la conexión con la base de datos o problemas de autorización.
-
-
-
+Esta API está diseñada para ser altamente escalable y segura, integrándose fácilmente con sistemas existentes y adaptándose a las necesidades de talleres de cualquier tamaño.
 
 # Configuración de Variables de Entorno
 Para que la API funcione correctamente, debes crear un archivo `.env` en la raíz de tu proyecto con las siguientes variables de entorno:
