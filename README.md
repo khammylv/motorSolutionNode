@@ -50,6 +50,10 @@ DB_PASSWORD= "tu_contraseña"  # Contraseña del usuario de la base de datos
 DB_NAME= "tu_nombre_bd"       # Nombre de la base de datos que utilizarás
 JWT_KEY= "tu_clave_secreta"   # Clave secreta utilizada para firmar los tokens JWT
 DB_TABLE_NAME= "tu_nombre_tabla"  # Nombre de la tabla de la base de datos
+DB_TABLE_CLIENT = "tabla_cliente"  # Nombre de la tabla clientes de la base de datos
+DB_TABLE_VEHICLE = "tabla_vehiculo" # Nombre de la tabla vehiculos de la base de datos
+SECRET_KEY = "llave_secreta_creacion_de_administrador" # Nombre de la llave secreta para creacion del administrador principal
+SECRET_KEY_SWAGGER = "secret_key_swagger" # Nombre de la llave secreta para creacion del administrador principal usada para test de api
 ```
 
 # Pruebas de la API
