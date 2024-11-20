@@ -613,6 +613,10 @@ app.delete("/api/delete-user/:id",tokens.verifyToken, users.deleteUser);
  *                 type: string
  *                 description: Identificación única del cliente.
  *                 example: 123456789
+ *               phone:
+ *                 type: string
+ *                 description: Número de teléfono del cliente.
+ *                 example: +573001234567
  *     responses:
  *       201:
  *         description: Cliente creado exitosamente.
@@ -680,6 +684,10 @@ app.post("/api/register-client", tokens.verifyToken,  clients.registerClient);
  *                     type: string
  *                     format: email
  *                     example: cliente@example.com
+ *                   phone:
+ *                     type: string
+ *                     description: Número de teléfono del cliente.
+ *                     example: +573001234567
  *       500:
  *         description: Error interno del servidor.
  *         content:
@@ -732,6 +740,10 @@ app.get("/api/clients",tokens.verifyToken, clients.getAllClient);
  *                   type: string
  *                   format: email
  *                   example: cliente@example.com
+ *                 phone:
+ *                   type: string
+ *                   description: Número de teléfono del cliente.
+ *                   example: +573001234567
  *       404:
  *         description: Cliente no encontrado.
  *         content:
@@ -792,6 +804,10 @@ app.get("/api/client/:id",tokens.verifyToken, clients.getClient);
  *                 format: email
  *                 description: Nuevo correo electrónico del cliente.
  *                 example: juan.perez@example.com
+ *               phone:
+ *                 type: string
+ *                 description: Nuevo número de teléfono del cliente.
+ *                 example: +573001234567
  *     responses:
  *       200:
  *         description: Cliente actualizado exitosamente.
@@ -1271,6 +1287,74 @@ app.get("/api/client-vehicles/:id",tokens.verifyToken, vehicles.getVehicleByClie
  *       bearerFormat: JWT  # Formato del token es JWT
  */
 app.put("/api/update-vehicle",tokens.verifyToken, vehicles.updateVehicle);
+
+/**
+ * @swagger
+ * /api/update-date-vehicle/:id:
+ *   put:
+ *     tags:
+ *       - Vehicles
+ *     summary: Actualiza la fecha de salida de un vehículo
+ *     description: Actualiza la fecha de salida de un vehículo utilizando su ID. Verifica si la operación se realizó correctamente.
+ *     security:
+ *       - BearerAuth: []  # Se requiere un token Bearer para acceder a este endpoint
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Identificación única del vehículo.
+ *         schema:
+ *           type: string
+ *           example: 123
+ *       - name: date
+ *         in: body
+ *         required: true
+ *         description: Nueva fecha de salida del vehículo.
+ *         schema:
+ *           type: object
+ *           properties:
+ *             date:
+ *               type: string
+ *               format: date
+ *               description: Fecha de salida del vehículo en formato YYYY-MM-DD.
+ *               example: "2024-11-21"
+ *     responses:
+ *       200:
+ *         description: Fecha de salida actualizada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Fecha de salida actualizada
+ *       400:
+ *         description: No se pudo actualizar la fecha de salida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No se pudo actualizar la fecha de salida
+ *       500:
+ *         description: Error interno del servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Error inesperado.
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT  # Formato del token es JWT
+ */
+app.put("/api/update-date-vehicle/:id",tokens.verifyToken, vehicles.updateDateVehicle);
+
 
 /**
  * @swagger

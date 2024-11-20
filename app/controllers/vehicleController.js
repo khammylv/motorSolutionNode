@@ -72,6 +72,23 @@ async function getAllVehicle(req, res) {
       return res.status(500).json(err.message);
   }
   }
+
+  async function updateDateVehicle(req, res) {
+    const { id } = req.params;
+    try{
+  
+      const result = await queries.updateDateVehicle(id);
+      if (result.affectedRows > 0) {
+        res.status(200).json({ message: 'Fecha de salida actualizada' });
+    } else {
+        res.status(400).json({ message: 'No se pudo actualizar la fecha de salida' });
+    }
+    }
+    catch (err) {
+      console.error(err);
+      return res.status(500).json(err.message);
+  }
+  }
   
   async function deleteVehicle(req, res) {
     const { id } = req.params;
@@ -95,5 +112,6 @@ async function getAllVehicle(req, res) {
     getVehicle,
     getVehicleByClient,
     updateVehicle,
+    updateDateVehicle,
     deleteVehicle
   }

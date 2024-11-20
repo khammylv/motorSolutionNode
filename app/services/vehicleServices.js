@@ -28,6 +28,13 @@ async function updateVehicle(idVehicle,idClient, brand, model ,plate ,repair_des
         [parseInt(idClient), brand, model, plate, repair_description, idVehicle]);
     return result;
 }
+async function updateDateVehicle(idVehicle){
+    const db = await connectToDatabase();
+    const [result] =  await db.query(vehicleConstans.editDepartureDate, 
+        [ idVehicle]);
+    return result;
+}
+
 
 async function deleteVehicle(idVehicle){
     const db = await connectToDatabase();
@@ -40,5 +47,6 @@ export const queries = {
     registerVehicle,
     getAllVehicle,
     updateVehicle,
+    updateDateVehicle,
     deleteVehicle
 }

@@ -9,10 +9,10 @@ async function checkClientExists(email, clientIdentification, client_id) {
 }
 
 // Función para registrar el usuario en la base de datos
-async function registerClient(email, name,clientIdentification) {
+async function registerClient(email, name,clientIdentification, phone) {
     const db = await connectToDatabase();
     await db.query(clientConstans.client_register, 
-        [ email,name,parseInt(clientIdentification)]);
+        [ email,name,parseInt(clientIdentification), phone]);
 }
 
 async function getAllClient(){
@@ -21,10 +21,10 @@ async function getAllClient(){
     return clients
 }
 
-async function updateClient(clientId,name,clientIdentification, email){
+async function updateClient(clientId,name,clientIdentification, email, phone){
     const db = await connectToDatabase();
     const [client] =  await db.query(clientConstans.updateClient, 
-        [ email,name, parseInt(clientIdentification) , clientId]);
+        [ email,name, parseInt(clientIdentification) , phone, clientId]);
     return client;
 }
 

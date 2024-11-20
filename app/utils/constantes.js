@@ -13,16 +13,17 @@ const updatePassword = `UPDATE ${process.env.DB_TABLE_NAME} SET password = ? WHE
 const deleteUser = `DELETE FROM ${process.env.DB_TABLE_NAME} WHERE user_id = ?`;
 
 const query_validate_client = `SELECT * FROM ${process.env.DB_TABLE_CLIENT} WHERE client_id = ? OR 	client_identification = ? OR email = ?`;
-const client_register = `INSERT INTO ${process.env.DB_TABLE_CLIENT} (email, name, client_identification) VALUES (?,?,?)`;
+const client_register = `INSERT INTO ${process.env.DB_TABLE_CLIENT} (email, name, client_identification, phone) VALUES (?,?,?,?)`;
 const getClients = `SELECT * FROM ${process.env.DB_TABLE_CLIENT}`;
-const updateClient= `UPDATE ${process.env.DB_TABLE_CLIENT} SET email = ? , name = ? , client_identification = ? WHERE client_id = ?`;
+const updateClient= `UPDATE ${process.env.DB_TABLE_CLIENT} SET email = ? , name = ? , client_identification = ? , phone = ?WHERE client_id = ?`;
 const deleteClient = `DELETE FROM ${process.env.DB_TABLE_CLIENT} WHERE client_id = ?`;
 
 const query_validate_vehicle = `SELECT * FROM ${process.env.DB_TABLE_VEHICLE} WHERE id_vehicle =? OR id_client = ? OR plate_vehicle = ?`;
 const vehicleRegister = `INSERT INTO ${process.env.DB_TABLE_VEHICLE} (id_client, brand_vehicle, model_vehicle, plate_vehicle, repair_description) VALUES (?,?,?,?,?)`;
 const getVehicle = `SELECT * FROM ${process.env.DB_TABLE_VEHICLE}`;
 const udpateVehicle = `UPDATE ${process.env.DB_TABLE_VEHICLE} SET id_client=?,brand_vehicle= ?,model_vehicle= ?,plate_vehicle= ? ,repair_description = ? WHERE id_vehicle = ? `;
-const deleteVehicle = `DELETE FROM ${process.env.DB_TABLE_VEHICLE} WHERE id_vehicle = ?`
+const deleteVehicle = `DELETE FROM ${process.env.DB_TABLE_VEHICLE} WHERE id_vehicle = ?`;
+const editDepartureDate = `UPDATE ${process.env.DB_TABLE_VEHICLE} SET fecha_salida = NOW() WHERE id_vehicle = ?`;
 
 export const constans = {
     query_validate,
@@ -47,5 +48,6 @@ export const vehicleConstans = {
     vehicleRegister,
     getVehicle,
     udpateVehicle,
-    deleteVehicle
+    deleteVehicle,
+    editDepartureDate
 }

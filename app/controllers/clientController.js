@@ -1,7 +1,7 @@
 import { queries } from '../services/clientServices.js';
 import { validationClient } from '../utils/validations.js';
 async function registerClient(req, res) {
-    const { email, name,clientIdentification } = req.body;
+    const { email, name,clientIdentification, phone } = req.body;
     try {
         
         const userExists = await queries.checkClientExists(email, clientIdentification, "");
@@ -11,7 +11,7 @@ async function registerClient(req, res) {
         }
 
     
-        await queries.registerClient(email, name, clientIdentification);
+        await queries.registerClient(email, name, clientIdentification, phone);
         return res.status(201).json({ message: "Cliente creado exitosamente." });
 
     }
@@ -46,10 +46,10 @@ async function getAllClient(req, res) {
   }
   
   async function updateClient(req, res) {
-    const { client_id, name, client_identification, email} = req.body;
+    const { client_id, name, client_identification, email, phone} = req.body;
     try{
   
-      const result = await queries.updateClient(client_id, name, client_identification, email);
+      const result = await queries.updateClient(client_id, name, client_identification, email, phone);
       if (result.affectedRows > 0) {
         res.status(200).json({ message: 'Cliente actualizado' });
     } else {
